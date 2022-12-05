@@ -1,115 +1,84 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 type State [][]string
 
-func main() {
-	file, _ := os.Open("./banana")
-	state := State{
-		{
-			"D",
-			"T",
-			"W",
-			"N",
-			"L",
-		},
-		{
-			"H",
-			"P",
-			"C",
-		},
-		{
-			"J",
-			"M",
-			"G",
-			"D",
-			"N",
-			"H",
-			"P",
-			"W",
-		},
-		{
-			"L",
-			"Q",
-			"T",
-			"N",
-			"S",
-			"W",
-			"C",
-		},
-		{
-			"N",
-			"C",
-			"H",
-			"P",
-		},
-		{
-			"B",
-			"Q",
-			"W",
-			"M",
-			"D",
-			"N",
-			"H",
-			"T",
-		},
-		{
-			"L",
-			"S",
-			"G",
-			"J",
-			"R",
-			"B",
-			"M",
-		},
-		{
-			"T",
-			"R",
-			"B",
-			"V",
-			"G",
-			"W",
-			"N",
-			"Z",
-		},
-		{
-			"L",
-			"P",
-			"N",
-			"D",
-			"G",
-			"W",
-		},
+func (input State) parseInputLine(line []byte) {
+	idx := 0
+	for k, v := range line {
+		if v >= 'A' && v <= 'Z' {
+			if len(input) < idx {
+				input[idx] = []string{}
+			}
+			input[idx] = append(input[idx], string(v))
+		}
+		if k != 0 && k%4 == 0 {
+			idx += 1
+		}
 	}
-	// partOne(state, file)
-	fmt.Println(state)
-	partTwo(state, file)
 }
 
-func partOne(state State, file *os.File) {
-	scanner := bufio.NewScanner(file)
+func parseFirstPart(fileContent []byte) (State, int) {
+	var inputMatrix State
+	initiated := false
 
-	for scanner.Scan() {
-		text := scanner.Text()
-		stuffToDo := parseSteps(text)
+	for k, v := range strings.Split(string(fileContent), "\n") {
+		byteText := []byte(v)
+		if len(byteText) == 0 {
+			return inputMatrix, k
+		}
+		if !initiated {
+			// TODO: Fix how to calculate the length based on input
+			inputMatrix = make(State, 9)
+			initiated = true
+		}
+		inputMatrix.parseInputLine(byteText)
+	}
+	return nil, 0
+}
+
+func main() {
+	file, err := os.ReadFile("./fullfile")
+	if err != nil {
+		panic(err.Error())
+	}
+	state, row := parseFirstPart(file)
+	initialstate := append([][]string{}, state...)
+	partOne(state, file, row)
+	partTwo(initialstate, file, row)
+}
+
+func partOne(state State, fileContent []byte, idx int) {
+	for k, v := range strings.Split(string(fileContent), "\n") {
+		if k <= idx {
+			continue
+		}
+		if v == "" {
+			break
+		}
+		stuffToDo := parseSteps(v)
 		state.doStuff(stuffToDo)
 	}
 	state.getFirstOfEachCrate("Part 1")
 }
 
-func partTwo(state State, file *os.File) {
-	scanner := bufio.NewScanner(file)
-
-	for scanner.Scan() {
-		text := scanner.Text()
-		stuffToDo := parseSteps(text)
+func partTwo(state State, fileContent []byte, idx int) {
+	fmt.Println(state)
+	for k, v := range strings.Split(string(fileContent), "\n") {
+		if k <= idx {
+			continue
+		}
+		if v == "" {
+			break
+		}
+		stuffToDo := parseSteps(v)
 		state.doStuffPartTwo(stuffToDo)
 	}
 	state.getFirstOfEachCrate("Part 2")
@@ -136,12 +105,9 @@ func (initialstate State) doStuff(steps []int) {
 
 func (initialstate State) doStuffPartTwo(steps []int) {
 	amount, from, to := steps[0], steps[1], steps[2]
-	fmt.Printf("Move from %d to %d amount %d, initialstate-from %v, initialstate-to %v\n", from, to, amount, initialstate[from-1], initialstate[to-1])
 	prependData := append([]string(nil), initialstate[from-1][:amount]...)
-	fmt.Println(prependData)
 	initialstate[to-1] = append(prependData, initialstate[to-1]...)
 	initialstate[from-1] = initialstate[from-1][amount:]
-	fmt.Printf("Resulting: from %v, to %v\n", initialstate[from-1], initialstate[to-1])
 }
 
 func (initialstate State) getFirstOfEachCrate(part string) {
