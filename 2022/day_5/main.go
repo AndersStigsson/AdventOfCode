@@ -45,7 +45,7 @@ func parseFirstPart(fileContent []byte) (State, int) {
 }
 
 func main() {
-	file, err := os.ReadFile("./fullfile")
+	file, err := os.ReadFile("./fullfile.txt")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -70,7 +70,6 @@ func partOne(state State, fileContent []byte, idx int) {
 }
 
 func partTwo(state State, fileContent []byte, idx int) {
-	fmt.Println(state)
 	for k, v := range strings.Split(string(fileContent), "\n") {
 		if k <= idx {
 			continue
