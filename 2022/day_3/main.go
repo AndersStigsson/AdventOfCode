@@ -14,7 +14,7 @@ import (
 // Draw 3
 // Loss 0
 func main() {
-	file, _ := os.Open("./banana")
+	file, _ := os.Open("./banana.txt")
 	result := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 	scanner := bufio.NewScanner(file)
@@ -36,7 +36,7 @@ func main() {
 }
 
 func partTwo() {
-	file, _ := os.Open("./banana")
+	file, _ := os.Open("./banana.txt")
 	result := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 	scanner := bufio.NewScanner(file)

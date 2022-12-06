@@ -14,7 +14,7 @@ import (
 // Draw 3
 // Loss 0
 func main() {
-	file, _ := os.Open("./banana")
+	file, _ := os.Open("./banana.txt")
 
 	defer file.Close()
 

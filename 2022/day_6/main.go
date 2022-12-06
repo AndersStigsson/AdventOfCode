@@ -12,7 +12,7 @@ var (
 )
 
 func main() {
-	file, err := os.ReadFile("./banana")
+	file, err := os.ReadFile("./banana.txt")
 	if err != nil {
 		panic(err.Error())
 	}

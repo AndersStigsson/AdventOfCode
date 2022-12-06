@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	file, _ := os.Open("./banana")
+	file, _ := os.Open("./banana.txt")
 	scanner := bufio.NewScanner(file)
 
 	total := 0
@@ -37,7 +37,7 @@ func main() {
 }
 
 func partTwo() {
-	file, _ := os.Open("./banana")
+	file, _ := os.Open("./banana.txt")
 	scanner := bufio.NewScanner(file)
 
 	total := 0

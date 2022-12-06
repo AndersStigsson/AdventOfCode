@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	file, _ := os.Open("./banan")
+	file, _ := os.Open("./banan.txt")
 
 	defer file.Close()
 
