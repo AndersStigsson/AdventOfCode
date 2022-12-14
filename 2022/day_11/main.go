@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-//go:embed test.txt
+//go:embed banana.txt
 var input string
 
 type Value struct {
@@ -46,9 +46,10 @@ type Monkey struct {
 }
 
 type State struct {
-	Monkeys  []Monkey
-	Items    []Item
-	MaxValue int
+	Monkeys         []Monkey
+	Items           []Item
+	MaxValue        int
+	TogetherDivisor int
 }
 
 func parseStartingItems(str string, index int) []Item {
@@ -182,7 +183,7 @@ func (State *State) DoOperationOnItem(item Item, divideWorryLevel bool, index in
 	// 		}
 	// 	}
 	// }
-	return worryLevel
+	return worryLevel % State.TogetherDivisor
 }
 
 func (State *State) MoveItemToNextMonkey(item Item, index int) {
@@ -210,6 +211,14 @@ func (State *State) resetItems(index int) {
 			}
 		}
 	}
+}
+
+func (State *State) calculateDivisor() {
+	totalDivisor := 1
+	for _, v := range State.Monkeys {
+		totalDivisor *= v.Test.Value
+	}
+	State.TogetherDivisor = totalDivisor
 }
 
 func (State *State) doStuff(divideWorryLevel bool, rounds int) {
@@ -258,7 +267,8 @@ func partTwo() {
 	for _, v := range state.Monkeys {
 		state.Items = append(state.Items, v.Items...)
 	}
-	state.doStuff(false, 1000)
+	state.calculateDivisor()
+	state.doStuff(false, 10000)
 	state.PrintMonkeys()
 	mostInspectingMonkeys := state.FindMostInspectingMonkeys()
 	totalValue := 1
