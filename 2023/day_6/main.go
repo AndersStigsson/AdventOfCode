@@ -29,7 +29,6 @@ func main() {
 
 func solvePartOne() int {
 	c := parseInput(input)
-	fmt.Printf("Races %v\n", c.Races)
 	solutions := []int{}
 	for _, r := range c.Races {
 		solutions = append(solutions, r.SolveForX())
