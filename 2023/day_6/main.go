@@ -3,8 +3,10 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
+	"time"
 )
 
 //go:embed input.txt
@@ -20,15 +22,17 @@ type Race struct {
 }
 
 func main() {
-	fmt.Printf("Part 1: %d\n", solvePartOne())
-	fmt.Printf("Part 2: %d\n", solvePartTwo())
+	now := time.Now()
+	fmt.Printf("Part 1: %d, time: %vms\n", solvePartOne(), float64(time.Since(now).Microseconds())/float64(1000))
+	now = time.Now()
+	fmt.Printf("Part 2: %d, time: %vms\n", solvePartTwo(), float64(time.Since(now))/float64(time.Millisecond))
 }
 
 func solvePartOne() int {
 	c := parseInput(input)
 	solutions := []int{}
 	for _, r := range c.Races {
-		solutions = append(solutions, r.SolveForX())
+		solutions = append(solutions, r.FindSolutions())
 	}
 
 	if len(solutions) == 0 {
@@ -56,18 +60,15 @@ func solvePartTwo() int {
 	d, _ := strconv.Atoi(ds)
 
 	r := Race{Time: t, Distance: d}
-	solution := r.SolveForX()
+	solution := r.FindSolutions()
 
 	return solution
 }
 
-func (r *Race) SolveForX() int {
+func (r *Race) FindSolutions() int {
 	solutions := 0
-	for _, v := range rangeFn(0, r.Time+1) {
-		if v*(r.Time-v) > r.Distance {
-			solutions++
-		}
-	}
+	p := findPivotValue(r.Time, r.Distance)
+	solutions = (r.Time - 2*p) + 1
 	return solutions
 }
 
@@ -98,14 +99,31 @@ func parseInput(input string) Competition {
 	return c
 }
 
-func solveForX(distance int, t int) int {
-	solutions := 0
-	for _, v := range rangeFn(0, t+1) {
-		if v*(t-v) > distance {
-			solutions++
+// v is the value to test
+// t is the time
+// d is the distance
+func solvesFn(v, t, d int) bool {
+	return v*(t-v) > d
+}
+
+// t being the time for the race, d being the distance
+func findPivotValue(t int, d int) int {
+	pivot := 0
+	for i := 1; i < int(t/2); i++ {
+		test := float64(t) / math.Pow(2, float64(i))
+		if !solvesFn(int(test), t, d) {
+			pivot = int(test)
+			break
 		}
 	}
-	return solutions
+
+	for i := pivot; i < int(t/2); i++ {
+		if solvesFn(i, t, d) {
+			pivot = i
+			break
+		}
+	}
+	return pivot
 }
 
 func rangeFn(start int, stop int) []int {
