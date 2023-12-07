@@ -22,9 +22,6 @@ type Race struct {
 func main() {
 	fmt.Printf("Part 1: %d\n", solvePartOne())
 	fmt.Printf("Part 2: %d\n", solvePartTwo())
-	// fmt.Printf("Solutions: %d\n", solveForX(9, 7))
-	// fmt.Printf("Solutions: %d\n", solveForX(40, 15))
-	// fmt.Printf("Solutions: %d\n", solveForX(200, 30))
 }
 
 func solvePartOne() int {
@@ -48,7 +45,6 @@ func solvePartOne() int {
 
 func solvePartTwo() int {
 	c := parseInput(input)
-	fmt.Printf("Races %v\n", c.Races)
 	ts := ""
 	ds := ""
 	for _, r := range c.Races {
